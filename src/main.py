@@ -50,7 +50,7 @@ def processar_imagem() -> None:
     imagem = carregar_imagem(IMG_PATH)
     cinza = converter_cinza(imagem)
     blur = aplicar_gaussian_blur(cinza)
-    median = aplicar_median_blur(cinza)
+    mediana = aplicar_median_blur(cinza)
     equalizada = equalizar_histograma(cinza)
 
     thresh_global = threshold_global(cinza)
@@ -65,7 +65,7 @@ def processar_imagem() -> None:
 
     salvar_imagem(RESULTADOS_DIR / "grayscale.png", cinza)
     salvar_imagem(RESULTADOS_DIR / "blur.png", blur)
-    salvar_imagem(RESULTADOS_DIR / "median.png", median)
+    salvar_imagem(RESULTADOS_DIR / "mediana.png", mediana)
     salvar_imagem(RESULTADOS_DIR / "equalizada.png", equalizada)
     salvar_histograma(cinza, RESULTADOS_DIR / "histograma.png", "Histograma - escala de cinza")
     salvar_histograma(equalizada, RESULTADOS_DIR / "histograma_equalizada.png", "Histograma - equalizada")
