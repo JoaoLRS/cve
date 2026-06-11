@@ -8,6 +8,6 @@
 
     1.2 - Dois botões: `Imagem` e `Video`.
 
-2. Se o usuario clicar no botão `Imagem` o layout da aplicação ira expandir e ira conter a tela de Imagem referende ao [CDU-02](cdu-02.md).
+2. Se o usuario clicar no botão `Imagem` o layout da aplicação ira expandir e ira conter a tela de `Imagem` referende ao [CDU-02](cdu-02.md).
 
-3. Se o usuario clicar no botão `Video` o layout da aplicação ira expandir e ira conter a tela de Imagem referende ao [CDU-04](cdu-04.md).
+3. Se o usuario clicar no botão `Video` o layout da aplicação ira expandir e ira conter a tela de `Video` referende ao [CDU-04](cdu-04.md).
