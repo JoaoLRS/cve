@@ -10,4 +10,4 @@
 
 3. Ao clicar em algum `card` mudara para uma outra tela de `procesamento de imagem` referente ao [CDU-03](cdu-03.md).
 
-4. No fianl do sistema contera um botão `Voltar`, ele sera responsavelo por redirecionar para a tela anterior que nesse casso sera o [CDU-01](cdu-01.md).
+4. No final do sistema contera um botão `Voltar`, ele sera responsavelo por redirecionar para a tela anterior que nesse casso sera o [CDU-01](cdu-01.md).
