@@ -36,6 +36,7 @@ def salvar_imagem(caminho: Path, imagem: np.ndarray) -> None:
     if not cv2.imwrite(str(caminho), imagem):
         raise IOError(f"Nao foi possivel salvar a imagem: {caminho}")
 
+
 def threshold_global(imagem: np.ndarray, limiar: int = 127) -> np.ndarray:
     _, binaria = cv2.threshold(imagem, limiar, 255, cv2.THRESH_BINARY)
     return binaria
@@ -45,12 +46,14 @@ def threshold_adaptativo(
     imagem: np.ndarray,
     tamanho_janela: int = 11,
     constante: int = 2,
+    inverter: bool = False,
 ) -> np.ndarray:
+    tipo_threshold = cv2.THRESH_BINARY_INV if inverter else cv2.THRESH_BINARY
     return cv2.adaptiveThreshold(
         imagem,
         255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY,
+        tipo_threshold,
         tamanho_janela,
         constante,
     )
