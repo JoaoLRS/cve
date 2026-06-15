@@ -486,11 +486,28 @@ class ProcessamentoTela(ctk.CTkFrame):
         # Pergunta de forma textual ou abre janela OpenCV para selecionar vagas livres no clique
         # Janela OpenCV é muito mais interativa para gabarito:
         # Ele mostra as vagas enumeradas, se ele clicar na vaga ela fica VERDE (livre) ou VERMELHA (ocupada).
-        caminho_img = Path(self.imagem_dados["caminho"])
-        if not caminho_img.exists():
-            caminho_img = db.BASE_DIR / caminho_img.relative_to(db.BASE_DIR)
+        caminho_banco = Path(self.imagem_dados["caminho"])
+        
+        if not caminho_banco.exists():
+            # Se mudou de pasta, reconstrói o caminho na pasta atual do projeto
+            caminho_img = db.BASE_DIR / "data" / "importadas" / caminho_banco.name
+        else:
+            caminho_img = caminho_banco
 
-        imagem = cv2.imread(str(caminho_img))
+        # Verificação física do arquivo
+        if not caminho_img.exists():
+            messagebox.showerror("Erro", f"Arquivo de imagem nao encontrado:\n{caminho_img}")
+            return
+
+        # Carrega a imagem tratando os acentos no caminho (Área de Trabalho/OneDrive)
+        try:
+            imagem = cv2.imdecode(np.fromfile(str(caminho_img), dtype=np.uint8), cv2.IMREAD_COLOR)
+        except Exception:
+            imagem = None
+
+        if imagem is None:
+            messagebox.showerror("Erro", f"Nao foi possivel abrir a imagem pelo OpenCV:\n{caminho_img}")
+            return
         largura_vaga = 107
         altura_vaga = 48
         nome_janela = "Editar Gabarito - Clique para alternar Livre (Verde) / Ocupado (Vermelho)"
