@@ -155,11 +155,23 @@ class VideoTela(ctk.CTkFrame):
             self.alterar_pipeline(pipes[0])
 
         # Inicializa a captura do vídeo
-        if not self.video_path.exists():
-            # Tenta caminho relativo
-            self.video_path = db.BASE_DIR / "data" / "carPark.mp4"
+        caminho_base_video = db.BASE_DIR / "data" / "carPark.mp4"
+        
+        # Garante que self.video_path seja um objeto Path absoluto e correto
+        self.video_path = caminho_base_video
 
-        self.captura = cv2.VideoCapture(str(self.video_path))
+        # Se o arquivo não existir fisicamente ali, avisa o usuário em vez de quebrar
+        if not self.video_path.exists():
+            messagebox.showerror(
+                "Arquivo Não Encontrado", 
+                f"O arquivo de vídeo não foi encontrado na pasta do projeto:\n{self.video_path}\n\n"
+                f"Certifique-se de que o arquivo 'carPark.mp4' está dentro da pasta 'data'."
+            )
+            return
+
+        # Para caminhos com acento no Windows, converter para string absoluta ajuda o OpenCV
+        caminho_str = str(self.video_path.resolve())
+        self.captura = cv2.VideoCapture(caminho_str)
         if not self.captura.isOpened():
             messagebox.showerror("Erro", f"Não foi possível abrir o arquivo de vídeo: {self.video_path}")
             return
