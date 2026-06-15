@@ -10,4 +10,8 @@
 
 3. Ao clicar em algum `card` de imagem, o usuário será redirecionado para a tela de processamento de imagem correspondente, descrita no [CDU-03](cdu-03.md).
 
+<<<<<<< HEAD
 4. No final do layout da tela, haverá um botão `Voltar`, que será responsável por redirecionar o usuário para a tela inicial descrita no [CDU-01](cdu-01.md).
+=======
+4. No final do sistema contera um botão `Voltar`, ele sera responsavelo por redirecionar para a tela anterior que nesse casso sera o [CDU-01](cdu-01.md).
+>>>>>>> 6a36dd167d38919bba20493daa7197dab96edc64
