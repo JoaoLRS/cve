@@ -4,7 +4,7 @@ from tkinter import messagebox, simpledialog
 import customtkinter as ctk
 import cv2
 from PIL import Image
-
+import numpy as np
 import db
 import detector
 
@@ -297,12 +297,30 @@ class ProcessamentoTela(ctk.CTkFrame):
         if not self.imagem_dados:
             return
 
-        caminho_img = Path(self.imagem_dados["caminho"])
-        if not caminho_img.exists():
-            caminho_img = db.BASE_DIR / caminho_img.relative_to(db.BASE_DIR)
+        if isinstance(self.imagem_dados, dict):
+            caminho_do_banco = self.imagem_dados.get("caminho") or self.imagem_dados.get("caminho_img")
+        else:
+            caminho_do_banco = self.imagem_dados[1]
+
+        caminho_original = Path(caminho_do_banco)
+
+        if not caminho_original.exists():
+            caminho_img = db.BASE_DIR / "data" / "importadas" / caminho_original.name
+        else:
+            caminho_img = caminho_original      
+            
 
         # Carrega a imagem via OpenCV
-        img_cv2 = cv2.imread(str(caminho_img))
+        if not caminho_img.exists():
+            messagebox.showerror("Erro", f"Arquivo nao existe na pasta:\n{caminho_img}")
+            return
+
+        # Carrega a imagem via OpenCV suportando acentos no caminho (Windows)
+        try:
+            img_cv2 = cv2.imdecode(np.fromfile(str(caminho_img), dtype=np.uint8), cv2.IMREAD_COLOR)
+        except Exception as e:
+            img_cv2 = None
+
         if img_cv2 is None:
             messagebox.showerror("Erro", f"Nao foi possivel carregar imagem: {caminho_img}")
             return
