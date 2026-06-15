@@ -159,14 +159,6 @@ class ImagemTela(ctk.CTkFrame):
 
     def importar_imagens(self):
         # Pergunta se o usuario quer importar arquivo unico ou pasta
-        dialogo = ctk.CTkOptionMenu(
-            self,
-            values=["Importar Arquivo", "Importar Pasta (Lote)"],
-            command=self.executar_importacao
-        )
-        dialogo.pack(padx=20, pady=20)
-        dialogo.destroy() # Apenas exibe o popup
-        
         # Como o CustomTkinter nao tem uma caixa de dialogo nativa de multipla escolha simples,
         # usaremos o messagebox clássico
         resposta = messagebox.askyesnocancel(
