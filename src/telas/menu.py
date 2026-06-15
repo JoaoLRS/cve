@@ -12,7 +12,7 @@ class MenuTela(ctk.CTkFrame):
         # Titulo Principal
         self.titulo = ctk.CTkLabel(
             self,
-            text="CVE - Contabilização de vagas de estacionamento",
+            text="DCV - Detectação e Contabilização de Vagas",
             font=ctk.CTkFont(family="Helvetica", size=26, weight="bold"),
             text_color="#1f538d"
         )
@@ -21,7 +21,7 @@ class MenuTela(ctk.CTkFrame):
         # Subtitulo/Descricao
         self.subtitulo = ctk.CTkLabel(
             self,
-            text="Selecione o modo de operação para iniciar o processamento de imagens",
+            text="Escolha uma etapa: importar imagens, processar o pipeline ou avaliar os resultados",
             font=ctk.CTkFont(family="Helvetica", size=14),
             text_color="gray"
         )
@@ -36,7 +36,7 @@ class MenuTela(ctk.CTkFrame):
         # Botao Imagem
         self.btn_imagem = ctk.CTkButton(
             self.btn_frame,
-            text="Módulo Imagem\n(CDU-02 / CDU-03)",
+            text="Banco de Imagens\nImportar e selecionar",
             font=ctk.CTkFont(family="Helvetica", size=16, weight="bold"),
             height=80,
             width=200,
@@ -48,7 +48,7 @@ class MenuTela(ctk.CTkFrame):
         # Botao Video
         self.btn_video = ctk.CTkButton(
             self.btn_frame,
-            text="Módulo Vídeo\n(CDU-04)",
+            text="Processamento em Vídeo\nVisualizar detecção",
             font=ctk.CTkFont(family="Helvetica", size=16, weight="bold"),
             height=80,
             width=200,
@@ -62,7 +62,7 @@ class MenuTela(ctk.CTkFrame):
         # Botao Avaliacao
         self.btn_avaliacao = ctk.CTkButton(
             self.btn_frame,
-            text="Módulo Avaliação\n(CDU-05)",
+           text="Avaliação em Lote\nMétricas e relatório",
             font=ctk.CTkFont(family="Helvetica", size=16, weight="bold"),
             height=80,
             width=200,
@@ -76,7 +76,7 @@ class MenuTela(ctk.CTkFrame):
         # Footer
         self.footer = ctk.CTkLabel(
             self,
-            text="Disciplina: Processamento Digital de Imagens | Prof. OpenCV",
+            text="Processamento Digital de Imagens | Detecção de vagas com OpenCV",
             font=ctk.CTkFont(family="Helvetica", size=11),
             text_color="gray"
         )

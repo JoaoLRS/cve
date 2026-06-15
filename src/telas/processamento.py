@@ -32,13 +32,13 @@ class ProcessamentoTela(ctk.CTkFrame):
         # Título lateral
         self.lbl_filtro_titulo = ctk.CTkLabel(
             self.sidebar,
-            text="Calibração do Pipeline",
+            text="Configuração do Pipeline",
             font=ctk.CTkFont(family="Helvetica", size=18, weight="bold"),
         )
         self.lbl_filtro_titulo.grid(row=0, column=0, padx=20, pady=(20, 10), sticky="w")
 
         # Dropdown de Pipelines
-        self.lbl_select_pipe = ctk.CTkLabel(self.sidebar, text="Pipeline Salvo:", font=ctk.CTkFont(size=12))
+        self.lbl_select_pipe = ctk.CTkLabel(self.sidebar, text="Pipeline selecionado:", font=ctk.CTkFont(size=12))
         self.lbl_select_pipe.grid(row=1, column=0, padx=20, pady=(5, 0), sticky="w")
 
         self.cb_pipelines = ctk.CTkOptionMenu(
@@ -51,7 +51,7 @@ class ProcessamentoTela(ctk.CTkFrame):
         # Botão para salvar o pipeline atual
         self.btn_salvar_pipe = ctk.CTkButton(
             self.sidebar,
-            text="Salvar Configuração",
+            text="Salvar pipeline",
             command=self.salvar_pipeline_atual,
             fg_color="#2c82c9",
             hover_color="#1e5885",
@@ -72,7 +72,7 @@ class ProcessamentoTela(ctk.CTkFrame):
 
         self.btn_processar = ctk.CTkButton(
             self.action_frame,
-            text="Iniciar Processamento",
+            text="Processar imagem",
             font=ctk.CTkFont(size=14, weight="bold"),
             fg_color="#2ecc71",
             hover_color="#27ae60",
@@ -82,7 +82,7 @@ class ProcessamentoTela(ctk.CTkFrame):
 
         self.btn_voltar = ctk.CTkButton(
             self.action_frame,
-            text="Voltar para Imagens",
+            text="Voltar ao banco de imagens",
             fg_color="#7f8c8d",
             hover_color="#636e72",
             command=lambda: self.controller.mostrar_tela("Imagem"),
@@ -111,7 +111,7 @@ class ProcessamentoTela(ctk.CTkFrame):
         # Botões de marcação e gabarito
         self.btn_marcar = ctk.CTkButton(
             self.info_frame,
-            text="Marcar Vagas (ROIs)",
+            text="Marcar Vagas",
             font=ctk.CTkFont(size=12),
             fg_color="#8e44ad",
             hover_color="#732d91",
@@ -121,7 +121,7 @@ class ProcessamentoTela(ctk.CTkFrame):
 
         self.btn_gabarito = ctk.CTkButton(
             self.info_frame,
-            text="Editar Gabarito (Ground Truth)",
+            text="Editar Gabarito",
             font=ctk.CTkFont(size=12),
             fg_color="#d35400",
             hover_color="#a04000",
@@ -132,7 +132,7 @@ class ProcessamentoTela(ctk.CTkFrame):
         # Indicador visual do Pipeline Utilizado
         self.lbl_fluxo_pipe = ctk.CTkLabel(
             self.main_content,
-            text="Pipeline Utilizado: Original ➔ Cinza ➔ Gaussian Blur ➔ Adaptive Threshold ➔ Median Blur ➔ Dilatação ➔ Resultado",
+            text="Pipeline utilizado: imagem original ➔ escala de cinza ➔ suavização ➔ limiarização adaptativa ➔ filtro de mediana ➔ dilatação ➔ resultado final",
             font=ctk.CTkFont(family="Helvetica", size=12, slant="italic"),
             text_color="#3498db",
         )
@@ -183,14 +183,14 @@ class ProcessamentoTela(ctk.CTkFrame):
         self.slider_morph_k.set(3)
 
         # 6. Morphological Iterations
-        self.lbl_morph_it = ctk.CTkLabel(self.sliders_frame, text="Iterações Dilatação:")
+        self.lbl_morph_it = ctk.CTkLabel(self.sliders_frame, text="Dilatação - número de iterações:")
         self.lbl_morph_it.pack(anchor="w", padx=10, pady=0)
         self.slider_morph_it = ctk.CTkSlider(self.sliders_frame, from_=1, to=5, number_of_steps=4, command=self.ajustar_morph_it)
         self.slider_morph_it.pack(fill="x", padx=10, pady=(0, 10))
         self.slider_morph_it.set(1)
 
         # 7. Limiar Vaga Livre (Count non zero pixels)
-        self.lbl_limiar = ctk.CTkLabel(self.sliders_frame, text="Limiar Pixels Vaga Livre:")
+        self.lbl_limiar = ctk.CTkLabel(self.sliders_frame, text="Limiar para classificar vaga livre:")
         self.lbl_limiar.pack(anchor="w", padx=10, pady=0)
         self.slider_limiar = ctk.CTkSlider(self.sliders_frame, from_=100, to=3000, number_of_steps=29, command=self.ajustar_limiar)
         self.slider_limiar.pack(fill="x", padx=10, pady=(0, 10))
@@ -232,12 +232,12 @@ class ProcessamentoTela(ctk.CTkFrame):
 
     def ajustar_morph_it(self, val):
         val = int(float(val))
-        self.lbl_morph_it.configure(text=f"Iterações Dilatação: {val}")
+        self.lbl_morph_it.configure(text=f"Dilatação - número de iterações: {val}")
         self.pipeline_config["morph_iterations"] = val
 
     def ajustar_limiar(self, val):
         val = int(float(val))
-        self.lbl_limiar.configure(text=f"Limiar Pixels Vaga Livre: {val}")
+        self.lbl_limiar.configure(text=f"Limiar para classificar vaga livre: {val}")
         self.pipeline_config["limiar_vaga_livre"] = val
 
     def carregar_dados_imagem(self, imagem_id):
@@ -284,14 +284,17 @@ class ProcessamentoTela(ctk.CTkFrame):
             self.ajustar_limiar(config.get("limiar_vaga_livre", 900))
 
     def salvar_pipeline_atual(self):
-        nome = simpledialog.askstring("Salvar Pipeline", "Digite o nome para o novo Pipeline:")
+        nome = simpledialog.askstring(
+            "Salvar Pipeline",
+            "Digite o nome para esta configuração de pipeline:"
+            )
         if nome:
             db.salvar_pipeline(nome, self.pipeline_config)
             # Recarrega a combo box
             pipes = db.listar_pipelines()
             self.cb_pipelines.configure(values=pipes)
             self.cb_pipelines.set(nome)
-            messagebox.showinfo("Sucesso", f"Pipeline '{nome}' cadastrado com sucesso!")
+            messagebox.showinfo("Pipeline salvo", f"O pipeline '{nome}' foi salvo com sucesso!")
 
     def executar_processamento(self):
         if not self.imagem_dados:
@@ -388,13 +391,13 @@ class ProcessamentoTela(ctk.CTkFrame):
         lbl_final.pack(padx=10, pady=5)
         self.imagens_processadas_cache.append(ctk_final)
 
-        lbl_final_titulo = ctk.CTkLabel(card_final, text="Resultado Final", font=ctk.CTkFont(weight="bold", size=13))
+        lbl_final_titulo = ctk.CTkLabel(card_final, text="Resultado final da detecção", font=ctk.CTkFont(weight="bold", size=13))
         lbl_final_titulo.pack(pady=2)
 
         # Estatísticas do Resultado Local
         total = len(vagas)
         livres = resultado["vagas_livres"]
-        info_txt = f"Livres: {livres} / Total: {total}"
+        info_txt = f"Vagas livres detectadas: {livres} / Total de vagas: {total}"
 
         # Verifica se há Gabarito para calcular a taxa de acerto
         gabarito = db.obter_ground_truth(self.imagem_id)
@@ -410,7 +413,7 @@ class ProcessamentoTela(ctk.CTkFrame):
                 if real_livre == det_livre:
                     certos += 1
             taxa_acerto = (certos / total) * 100 if total > 0 else 0
-            info_txt += f"\nTaxa de Acerto: {taxa_acerto:.1f}%"
+            info_txt += f"\nTaxa de acerto nesta imagem: {taxa_acerto:.1f}%"
 
         lbl_stats = ctk.CTkLabel(card_final, text=info_txt, font=ctk.CTkFont(size=11, slant="italic"))
         lbl_stats.pack(pady=2)

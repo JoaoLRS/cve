@@ -25,14 +25,14 @@ class ImagemTela(ctk.CTkFrame):
 
         self.titulo = ctk.CTkLabel(
             self.cabecalho,
-            text="Imagem - Banco de Dados",
+            text="Banco de Imagens",
             font=ctk.CTkFont(family="Helvetica", size=22, weight="bold")
         )
         self.titulo.grid(row=0, column=0, sticky="w")
 
         self.btn_importar = ctk.CTkButton(
             self.cabecalho,
-            text="Importar Imagens",
+            text="Importar imagens",
             font=ctk.CTkFont(family="Helvetica", size=13, weight="bold"),
             command=self.importar_imagens
         )
@@ -49,7 +49,7 @@ class ImagemTela(ctk.CTkFrame):
         
         self.btn_voltar = ctk.CTkButton(
             self.footer,
-            text="Voltar",
+            text="Voltar ao menu",
             fg_color="#a0a0a0",
             hover_color="#808080",
             text_color="black",
@@ -72,7 +72,7 @@ class ImagemTela(ctk.CTkFrame):
         if not imagens:
             self.lbl_vazio = ctk.CTkLabel(
                 self.scroll_frame,
-                text="Nenhuma imagem cadastrada no banco de dados.\nClique no botao 'Importar Imagens' acima para adicionar.",
+                text="Nenhuma imagem cadastrada.\nClique em 'Importar imagens' para adicionar uma imagem ou uma pasta.",
                 font=ctk.CTkFont(family="Helvetica", size=14, slant="italic"),
                 text_color="gray"
             )
@@ -135,7 +135,7 @@ class ImagemTela(ctk.CTkFrame):
             # Botoes de Acao no Card
             btn_abrir = ctk.CTkButton(
                 card,
-                text="Processar",
+                text="Abrir processamento",
                 height=26,
                 font=ctk.CTkFont(family="Helvetica", size=11, weight="bold"),
                 command=lambda img_id=img_dados["id"]: self.abrir_processamento(img_id)
@@ -144,7 +144,7 @@ class ImagemTela(ctk.CTkFrame):
 
             btn_excluir = ctk.CTkButton(
                 card,
-                text="Excluir",
+                text="Excluir imagem",
                 height=24,
                 fg_color="#c0392b",
                 hover_color="#962d22",
@@ -166,9 +166,11 @@ class ImagemTela(ctk.CTkFrame):
         # Como o CustomTkinter nao tem uma caixa de dialogo nativa de multipla escolha simples,
         # usaremos o messagebox clássico
         resposta = messagebox.askyesnocancel(
-            "Tipo de Importacao",
-            "Deseja importar uma PASTA completa de imagens (Lote de teste)?\n"
-            "Clique 'Sim' para pasta, 'Nao' para arquivo individual, ou 'Cancelar'."
+            "Importar imagens",
+            "Escolha o tipo de importação:\n\n"
+            "Sim: importar uma pasta com várias imagens.\n"
+            "Não: importar apenas uma imagem.\n"
+            "Cancelar: voltar sem importar."
         )
 
         dest_dir = db.DATA_DIR / "importadas"
@@ -181,7 +183,10 @@ class ImagemTela(ctk.CTkFrame):
 
             caminhos_imagens = list(Path(pasta_selecionada).glob("*.png")) + list(Path(pasta_selecionada).glob("*.jpg"))
             if not caminhos_imagens:
-                messagebox.showwarning("Nenhuma Imagem", "Nenhuma imagem (.png ou .jpg) encontrada na pasta selecionada.")
+                messagebox.showwarning(
+                    "Nenhuma imagem encontrada",
+                    "A pasta selecionada não contém imagens nos formatos .png ou .jpg"
+                    )
                 return
 
             importados_count = 0
@@ -192,7 +197,7 @@ class ImagemTela(ctk.CTkFrame):
                 db.cadastrar_imagem(caminho_img.name, str(caminho_destino))
                 importados_count += 1
 
-            messagebox.showinfo("Sucesso", f"{importados_count} imagens importadas com sucesso da pasta!")
+            messagebox.showinfo("Importação concluída", f"{importados_count} imagens foram importadas com sucesso!")
             self.carregar_cards_imagens()
 
         elif resposta is False:  # Arquivo Unico
@@ -208,5 +213,5 @@ class ImagemTela(ctk.CTkFrame):
             shutil.copy2(caminho_img, caminho_destino)
             db.cadastrar_imagem(caminho_img.name, str(caminho_destino))
 
-            messagebox.showinfo("Sucesso", "Imagem importada com sucesso!")
+            messagebox.showinfo("Importação concluída", "A imagem foi importada com sucesso!")
             self.carregar_cards_imagens()

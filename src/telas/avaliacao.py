@@ -43,7 +43,7 @@ class AvaliacaoTela(ctk.CTkFrame):
         self.lbl_titulo.grid(row=0, column=0, padx=20, pady=20, sticky="w")
 
         # Seleção de Pipeline
-        self.lbl_pipe = ctk.CTkLabel(self.esquerda_frame, text="Pipeline para Avaliar:")
+        self.lbl_pipe = ctk.CTkLabel(self.esquerda_frame, text="Pipeline avaliado:")
         self.lbl_pipe.grid(row=1, column=0, padx=20, pady=(10, 2), sticky="w")
 
         self.cb_pipelines = ctk.CTkOptionMenu(self.esquerda_frame, values=[])
@@ -52,7 +52,7 @@ class AvaliacaoTela(ctk.CTkFrame):
         # Botão para Executar a Avaliação
         self.btn_avaliar = ctk.CTkButton(
             self.esquerda_frame,
-            text="Executar Avaliação em Lote",
+            text="Executar Avaliação das 30 imagens",
             font=ctk.CTkFont(size=13, weight="bold"),
             fg_color="#2ecc71",
             hover_color="#27ae60",
@@ -75,7 +75,7 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         self.lbl_recall = ctk.CTkLabel(
             self.stats_scroll,
-            text="Recall (Vagas Vazias): -",
+            text="Taxa de acerto das vagas livres: -",
             font=ctk.CTkFont(size=14, weight="bold"),
             text_color="#2ecc71",
         )
@@ -83,7 +83,7 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         self.lbl_precisao = ctk.CTkLabel(
             self.stats_scroll,
-            text="Precisão (Vagas Vazias): -",
+            text="Precisão das vagas livres: -",
             font=ctk.CTkFont(size=13),
         )
         self.lbl_precisao.pack(anchor="w", padx=10, pady=2)
@@ -104,13 +104,13 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         self.txt_comparativo = ctk.CTkTextbox(self.stats_scroll, height=150, font=ctk.CTkFont(family="Courier", size=11))
         self.txt_comparativo.pack(fill="x", padx=10, pady=5)
-        self.txt_comparativo.insert("0.0", "Execute a avaliação para ver a comparação de desempenho.")
+        self.txt_comparativo.insert("0.0", "Execute a avaliação para comparar os pipelines cadastrados.")
         self.txt_comparativo.configure(state="disabled")
 
         # Botão para exportar relatório acadêmico
         self.btn_exportar = ctk.CTkButton(
             self.esquerda_frame,
-            text="Exportar Relatório Acadêmico",
+            text="Exportar relatório da avaliação",
             fg_color="#34495e",
             hover_color="#2c3e50",
             command=self.exportar_relatorio,
@@ -119,7 +119,7 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         self.btn_voltar = ctk.CTkButton(
             self.esquerda_frame,
-            text="Voltar ao Menu",
+            text="Voltar ao menu",
             fg_color="#7f8c8d",
             hover_color="#636e72",
             command=lambda: self.controller.mostrar_tela("Menu"),
@@ -136,7 +136,7 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         self.lbl_direita_titulo = ctk.CTkLabel(
             self.direita_frame,
-            text="Resultados da Avaliação e Lote de Imagens",
+            text="Resultados da avaliação nas imagens de teste",
             font=ctk.CTkFont(family="Helvetica", size=18, weight="bold"),
         )
         self.lbl_direita_titulo.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="w")
@@ -147,13 +147,13 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         self.lbl_matriz_info = ctk.CTkLabel(
             self.matriz_frame,
-            text="Gráfico da Matriz de Confusão será plotado aqui",
+            text="A matriz de confusão será exibida após executar a avaliação.",
             font=ctk.CTkFont(slant="italic"),
         )
         self.lbl_matriz_info.pack(expand=True, fill="both")
 
         # Galeria de lote com scroll
-        self.galeria_scroll = ctk.CTkScrollableFrame(self.direita_frame, orientation="horizontal", label_text="Lote de Imagens de Teste")
+        self.galeria_scroll = ctk.CTkScrollableFrame(self.direita_frame, orientation="horizontal", label_text="Imagens avaliadas")
         self.galeria_scroll.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
 
         self.resultado_benchmark_ultimo = {}
@@ -177,7 +177,7 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         # Atualiza título com quantidade de imagens com gabarito no banco
         self.lbl_direita_titulo.configure(
-            text=f"Resultados da Avaliação e Lote de Imagens (Lote atual: {len(lote_gabarito)} imagens com gabarito)"
+            text=f"Resultados da avaliação nas imagens de teste (lote atual: {len(lote_gabarito)} imagens com gabarito)"
         )
 
         # Renderiza a galeria de miniaturas de teste
@@ -213,7 +213,7 @@ class AvaliacaoTela(ctk.CTkFrame):
             gab = db.obter_ground_truth(img["id"])
             lbl_info = ctk.CTkLabel(
                 card,
-                text=f"Vagas: {len(vagas)}\nLivres reais: {len(gab)}",
+                text=f"Vagas marcadas: {len(vagas)}\nLivres no gabarito: {len(gab)}",
                 font=ctk.CTkFont(size=9),
                 text_color="gray",
             )
@@ -222,7 +222,10 @@ class AvaliacaoTela(ctk.CTkFrame):
     def executar_avaliacao_lote(self):
         nome_pipe = self.cb_pipelines.get()
         if not nome_pipe:
-            messagebox.showwarning("Aviso", "Cadastre ou selecione um pipeline primeiro!")
+            messagebox.showwarning(
+                "Pipeline não selecionado",
+                "Selecione um pipeline antes de executar a avaliação."
+            )
             return
 
         if len(self.imagens_avaliacao) < 1:
@@ -306,8 +309,8 @@ class AvaliacaoTela(ctk.CTkFrame):
 
         # Atualiza tela
         self.lbl_acuracia.configure(text=f"Acurácia Geral: {acuracia:.2f}%")
-        self.lbl_recall.configure(text=f"Recall (Vagas Vazias): {recall:.2f}%")
-        self.lbl_precisao.configure(text=f"Precisão (Vagas Vazias): {precisao:.2f}%")
+        self.lbl_recall.configure(text=f"Taxa de acerto das vagas livres: {recall:.2f}%")
+        self.lbl_precisao.configure(text=f"Precisão das vagas livres: {precisao:.2f}%")
         self.lbl_f1.configure(text=f"F1-Score: {f1_score:.2f}%")
 
         # Armazena resultados para exportar depois
@@ -431,7 +434,10 @@ class AvaliacaoTela(ctk.CTkFrame):
 
     def exportar_relatorio(self):
         if not self.resultado_benchmark_ultimo:
-            messagebox.showwarning("Aviso", "Antes de exportar, execute a avaliação de um pipeline!")
+            messagebox.showwarning(
+                 "Avaliação não executada",
+                 "Execute a avaliação em lote antes de exportar o relatório."
+                )
             return
 
         caminho_saida = db.BASE_DIR / "resultados" / "relatorio_avaliacao.md"
@@ -483,7 +489,7 @@ class AvaliacaoTela(ctk.CTkFrame):
                 f.write(markdown_content)
             messagebox.showinfo(
                 "Exportação Concluída",
-                f"Relatório exportado com sucesso em:\n{caminho_saida}\n\nVocê pode copiar este conteúdo para incluir no seu trabalho final do professor!",
+                f"Relatório exportado com sucesso em:\n{caminho_saida}\n\nO arquivo contém as métricas, a matriz de confusão e o desempenho por imagem.",
             )
         except Exception as e:
             messagebox.showerror("Erro ao Salvar", f"Não foi possível salvar o relatório: {e}")
