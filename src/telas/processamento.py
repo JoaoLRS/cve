@@ -1,5 +1,5 @@
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from tkinter import messagebox, simpledialog
 import customtkinter as ctk
 import cv2
@@ -420,8 +420,10 @@ class ProcessamentoTela(ctk.CTkFrame):
             return
 
         caminho_img = Path(self.imagem_dados["caminho"])
+
         if not caminho_img.exists():
-            caminho_img = db.BASE_DIR / caminho_img.relative_to(db.BASE_DIR)
+            nome_arquivo = PureWindowsPath(self.imagem_dados["caminho"]).name
+            caminho_img = db.DATA_DIR / "importadas" / nome_arquivo
 
         imagem = cv2.imread(str(caminho_img))
         if imagem is None:
