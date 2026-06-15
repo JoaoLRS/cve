@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from tkinter import messagebox
 import customtkinter as ctk
 import cv2
@@ -250,8 +250,10 @@ class AvaliacaoTela(ctk.CTkFrame):
         # Processa cada imagem do lote
         for img_dados in self.imagens_avaliacao:
             caminho_img = Path(img_dados["caminho"])
+
             if not caminho_img.exists():
-                caminho_img = db.BASE_DIR / caminho_img.relative_to(db.BASE_DIR)
+                nome_arquivo = PureWindowsPath(img_dados["caminho"]).name
+                caminho_img = db.DATA_DIR / "importadas" / nome_arquivo
 
             img_cv2 = cv2.imread(str(caminho_img))
             if img_cv2 is None:
@@ -385,8 +387,10 @@ class AvaliacaoTela(ctk.CTkFrame):
             tp = fp = fn = tn = 0
             for img_dados in self.imagens_avaliacao:
                 caminho_img = Path(img_dados["caminho"])
+
                 if not caminho_img.exists():
-                    caminho_img = db.BASE_DIR / caminho_img.relative_to(db.BASE_DIR)
+                    nome_arquivo = PureWindowsPath(img_dados["caminho"]).name
+                    caminho_img = db.DATA_DIR / "importadas" / nome_arquivo
 
                 img_cv2 = cv2.imread(str(caminho_img))
                 if img_cv2 is None:
