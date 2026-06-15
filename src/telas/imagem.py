@@ -90,24 +90,28 @@ class ImagemTela(ctk.CTkFrame):
             card.grid_columnconfigure(0, weight=1)
 
             # Miniatura
-            caminho_img = Path(img_dados["caminho"])
+            caminho_banco = Path(img_dados["caminho"])
+            if not caminho_banco.exists():
+                # Se o caminho antigo não existir, procura na pasta atual do projeto
+                caminho_img = db.BASE_DIR / "data" / "importadas" / caminho_banco.name
+            else:
+                caminho_img = caminho_banco
+
             try:
-                # Verifica se o arquivo existe
-                if not caminho_img.exists():
-                    # Tenta caminho relativo ou padrão
-                    caminho_img = db.BASE_DIR / caminho_img.relative_to(db.BASE_DIR)
-                
                 pil_img = Image.open(caminho_img)
                 pil_img.thumbnail((160, 110))
                 ctk_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(160, 110))
             except Exception as e:
-                # Imagem de fallback caso haja erro ao carregar
+                # Imagem de fallback caso o arquivo realmente não exista fisicamente em lugar nenhum
                 pil_img = Image.new("RGB", (160, 110), color="#2c3e50")
                 ctk_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(160, 110))
 
             lbl_mini = ctk.CTkLabel(card, image=ctk_img, text="")
             lbl_mini.grid(row=0, column=0, padx=10, pady=10)
-            self.cards_referencias.append(ctk_img) # Previne Garbage Collection da imagem
+            
+            # Garante que o widget guarda a referência para evitar Garbage Collection
+            lbl_mini.image = ctk_img
+            self.cards_referencias.append(ctk_img)
 
             # Nome
             lbl_nome = ctk.CTkLabel(
