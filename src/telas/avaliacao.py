@@ -355,23 +355,27 @@ class AvaliacaoTela(ctk.CTkFrame):
         ax.set_yticklabels(["Ocupada", "Livre"], color="white" if ctk.get_appearance_mode() == "Dark" else "black")
         ax.set_xlabel("Predito", color="white" if ctk.get_appearance_mode() == "Dark" else "black", fontsize=10)
         ax.set_ylabel("Real", color="white" if ctk.get_appearance_mode() == "Dark" else "black", fontsize=10)
-        ax.set_title("Matriz de Confusão Geral", color="white" if ctk.get_appearance_mode() == "Dark" else "black", fontsize=11, weight="bold")
+        ax.set_title("Matriz de Confusão Geral\nClasse positiva: Vaga livre", color="white" if ctk.get_appearance_mode() == "Dark" else "black", fontsize=11, weight="bold")
 
         # Adiciona valores textuais na matriz
+        rotulos = [
+            [f"TN\n{tn}", f"FP\n{fp}"],
+            [f"FN\n{fn}", f"TP\n{tp}"],
+        ]
+
         for i in range(2):
             for j in range(2):
                 val = matriz[i, j]
                 ax.text(
                     j,
                     i,
-                    str(val),
+                    rotulos[i][j],
                     ha="center",
                     va="center",
                     color="white" if val > (matriz.max() / 2) else "black",
                     fontweight="bold",
                     fontsize=12,
                 )
-
         fig.tight_layout()
 
         # Adiciona canvas no Tkinter
